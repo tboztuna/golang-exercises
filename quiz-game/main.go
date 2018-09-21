@@ -1,15 +1,15 @@
 package main
 
 import (
-	"strings"
 	"encoding/csv"
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
-	csvFileName := flag.String("file", "questions.csv", "a CSV file in the format of 'question,answer'")
+	csvFileName := flag.String("file", "problems.csv", "a CSV file in the format of 'question,answer'")
 	flag.Parse()
 
 	file, err := os.Open(*csvFileName)
@@ -26,6 +26,18 @@ func main() {
 
 	problems := parseLines(lines)
 
+	correct := 0
+	for i, p := range problems {
+		fmt.Printf("Problem #%d: %s = \n", i+1, p.question)
+		var answer string
+		fmt.Scanf("%s\n", &answer)
+
+		if answer == p.answer {
+			correct++
+		}
+	}
+
+	fmt.Printf("You scored %d out of %d.\n", correct, len(problems))
 }
 
 func parseLines(lines [][]string) []problem {
@@ -34,9 +46,11 @@ func parseLines(lines [][]string) []problem {
 	for i, line := range lines {
 		ret[i] = problem{
 			question: line[0],
-			answer: strings.TrimSpace(line[1])
-		} 
+			answer:   strings.TrimSpace(line[1]),
+		}
 	}
+
+	return ret
 }
 
 func exit(msg string) {
