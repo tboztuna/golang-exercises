@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -28,6 +29,32 @@ func main() {
 
 	problems := parseLines(lines)
 
+	// setting up a timer
+	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
+	correct := 0
+
+problemLoop:
+	for i, p := range problems {
+		fmt.Printf("Problem #%d: %s = ", i+1, p.question)
+		answerChan := make(chan string)
+
+		go func() {
+			var answer string
+			fmt.Scanf("%s\n", &answer)
+			answerChan <- answer
+		}()
+
+		select {
+		case <-timer.C:
+			fmt.Println()
+			break problemLoop
+		case answer := <-answerChan:
+			if answer == p.answer {
+				correct++
+			}
+		}
+	}
+	fmt.Printf("You scored %d out of %d.\n", correct, len(problems))
 }
 
 func parseLines(lines [][]string) []problem {
