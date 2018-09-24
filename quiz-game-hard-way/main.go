@@ -11,7 +11,7 @@ import (
 
 func main() {
 	csvFileName := flag.String("csv", "problems.csv", "a csv file in the format of 'question,answer'")
-	timeLimit := flag.Int("limit", 30, "the time limit for the quiz in seconds")
+	timeLimit := flag.Int("limit", 5, "the time limit for the quiz in seconds")
 	flag.Parse()
 
 	file, err := os.Open(*csvFileName)
@@ -46,7 +46,8 @@ problemLoop:
 
 		select {
 		case <-timer.C:
-			fmt.Println()
+			fmt.Println("")
+			fmt.Println("Time is up.")
 			break problemLoop
 		case answer := <-answerChan:
 			if answer == p.answer {
